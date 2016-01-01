@@ -8,6 +8,7 @@ var crypto = require('crypto');
 // =======
 
 var log = console.log.bind(console);
+var error = console.error.bind(console);
 
 // the logic
 // =========
@@ -47,7 +48,7 @@ randomString = function (len) {
   }
 };
 
-toSql = function (q, d) {
+var f = function (q, d) {
   var sql = false;
 
   switch (q.queryType) {
@@ -136,6 +137,14 @@ toSql = function (q, d) {
 
   return sql;
 
+};
+
+toSql = function(q, d) {
+  try {
+    return f(q, d);    
+  } catch (e) {
+    error('ERROR in toSql, likely malformed input: ' + e);
+  }
 };
 
 // exports
