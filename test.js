@@ -68,3 +68,6 @@ log(tosql(q, null));
 var q = JSON.parse('{"queryType":"delete_table","schema":"accountid","adminOp":true,"bucketOp":false,"user":"accountid","password":"password"}');
 var d = JSON.parse('{"tableName":"mytable"}');
 log(tosql(q, d));
+
+var q = JSON.parse('{"queryType":"service_def","schema":"accountid","adminOp":true,"bucketOp":false,"user":"accountid","password":"password"}');var d = JSON.parse('{"tableName":"mytable"}');
+log(tosql(q, null));

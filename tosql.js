@@ -126,6 +126,12 @@ toSql = function (q, d) {
       sql = 'drop table ' + d.name + ';';
       break;
 
+    case 'service_def':
+      sql = 'select table_name, (data_length+index_length)/1024/1024 as mb ' +
+        'from information_schema.tables where table_schema="' + q.schema +
+        '"';
+      break;
+
   }
 
   return sql;
