@@ -1,17 +1,16 @@
-/*
-
-Example of input:
-
-false{"name":"b_mybucket"}
-
-
-
-*/
-
+// imports
+// =======
 
 var crypto = require('crypto');
 
+
+// logging
+// =======
+
 var log = console.log.bind(console);
+
+// the logic
+// =========
 
 // Documentation of the hash function used is found here:
 // http://nodejs.org/api/crypto.html
@@ -132,5 +131,8 @@ toSql = function (q, d) {
   return sql;
 
 };
+
+// exports
+// =======
 
 module.exports = toSql;
