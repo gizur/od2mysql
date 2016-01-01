@@ -1,6 +1,6 @@
 {
   "name": "od2mysql",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Create SQL from the output of odparser",
   "main": "index.js",
   "scripts": {
