@@ -49,10 +49,22 @@ var email2accountId = function (email) {
   return hashSum.digest(ACCOUNT_ID.HASH_ENCODING).slice(0, 12)
 };
 
+randomString = function(len) {
+  try {
+    var buf = crypto.randomBytes(256);
+    var str = new Buffer(buf).toString('base64');
+    return str.slice(0, len);
+  } catch (ex) {
+    // handle error, most likely are entropy sources drained
+    console.log('Error! ' + ex);
+    return null;
+  }
+};
+
 toSql = function (q, d) {
 
   var sql;
-  log(q);
+
   switch (q.queryType) {
 
     case 'create_account':
@@ -64,10 +76,16 @@ toSql = function (q, d) {
       break;
 
     case 'delete_account':
-      sql = "drop user '" + d.accountId + "'@'localhost';";
-      sql += 'drop database ' + d.accountId + ';';
+      var accountId = email2accountId(d.email);
+      sql = "drop user '" + accountId + "'@'localhost';";
+      sql += 'drop database ' + accountId + ';';
       break;
 
+    case 'reset_password':
+      var password = randomString(12);
+      sql = "set password for '" + d.accountId + "'@'localhost' = password('" +
+        password + "');";
+      break;
   }
 
   return sql;
