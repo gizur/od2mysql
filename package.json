@@ -21,7 +21,4 @@
     "url": "https://github.com/gizur/od2mysql/issues"
   },
   "homepage": "https://github.com/gizur/od2mysql#readme",
-  "dependencies": {
-    "odparser": "^0.1.0"
-  }
 }

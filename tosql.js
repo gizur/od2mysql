@@ -2,22 +2,9 @@
 
 Example of input:
 
-{"queryType":"create_account","admin_op":true,"bucket_op":false,"user":"accountid","password":"password"}{"email":"joe@example.com"}
-{"queryType":"reset_password","schema":"accountid","admin_op":true,"bucket_op":false,"user":"accountid","password":"password"}{"accountId":"accountid","email":"joe@example.com"}
-{"queryType":"create_table","schema":"accountid","admin_op":true,"bucket_op":false,"user":"accountid","password":"password"}{"tableDef":{"tableName":"mytable","columns":["col1 int","col2 varchar(255)"]}}
-{"queryType":"insert","schema":"accountid","table":"mytable","admin_op":false,"bucket_op":false,"user":"accountid","password":"password"}insert into accountid.mytable(col1,col2) values(22,"22");
-{"queryType":"select","schema":"accountid","table":"mytable","sql":"select * from accountid.mytable","admin_op":false,"bucket_op":false,"user":"accountid","password":"password"}
-{"queryType":"update","schema":"accountid","table":"mytable","admin_op":false,"bucket_op":false,"user":"accountid","password":"password"}update accountid.mytable set col2=33;
-{"queryType":"grant","schema":"accountid","admin_op":true,"bucket_op":false,"user":"accountid","password":"password"}{"tableName":"mytable","accountId":"accountid"}
-{"queryType":"revoke","schema":"accountid","admin_op":true,"bucket_op":false,"user":"accountid","password":"password"}{"tableName":"mytable","accountId":"accountid"}
-{"queryType":"delete","schema":"accountid","table":"mytable","sql":" where col1 = 22","admin_op":false,"bucket_op":false,"user":"accountid","password":"password"}{"tableName":"mytable","accountId":"accountid"}
-{"queryType":"metadata","schema":"accountid","table":"mytable","admin_op":false,"bucket_op":false,"user":"accountid","password":"password"}
 false{"name":"b_mybucket"}
-{"queryType":"create_bucket","schema":"accountid","admin_op":false,"bucket_op":false,"user":"accountid","password":"password"}{"name":"b_mybucket"}
-{"queryType":"insert","schema":"accountid","table":"b_mybucket","admin_op":false,"bucket_op":true,"user":"accountid","password":"password"}Some data to write to the bucket...
-{"queryType":"select","schema":"accountid","table":"b_mybucket","sql":"select * from accountid.b_mybucket","admin_op":false,"bucket_op":true,"user":"accountid","password":"password"}
-{"queryType":"drop_bucket","schema":"accountid","admin_op":false,"bucket_op":false,"user":"accountid","password":"password"}{"name":"b_mybucket"}
-{"queryType":"delete_account","schema":"accountid","admin_op":true,"bucket_op":false,"user":"accountid","password":"password"}{"email":"joe@example.com"}
+
+
 
 */
 
@@ -49,7 +36,7 @@ var email2accountId = function (email) {
   return hashSum.digest(ACCOUNT_ID.HASH_ENCODING).slice(0, 12)
 };
 
-randomString = function(len) {
+randomString = function (len) {
   try {
     var buf = crypto.randomBytes(256);
     var str = new Buffer(buf).toString('base64');
@@ -62,8 +49,7 @@ randomString = function(len) {
 };
 
 toSql = function (q, d) {
-
-  var sql;
+  var sql = false;
 
   switch (q.queryType) {
 
@@ -86,6 +72,61 @@ toSql = function (q, d) {
       sql = "set password for '" + d.accountId + "'@'localhost' = password('" +
         password + "');";
       break;
+
+    case 'create_table':
+      sql = 'create table ' + d.tableDef.tableName + ' (' +
+        d.tableDef.columns.join(',') + ');';
+      break;
+
+    case 'delete_table':
+      sql = 'drop table ' + d.tableName + ';';
+      break;
+
+    case 'insert':
+    case 'update':
+      if (!q.bucketOp) sql = d;
+      else {
+        var msg = 'writing to bucket ' + q.schema + '.' + q.table +
+          ' with credentials ' + q.user;
+
+        sql = 'insert into ' + q.schema + '.' + q.table + '(id,log) values(2,"' + msg + '");'
+      }
+      break;
+
+    case 'select':
+      sql = q.sql;
+      break;
+
+    case 'grant':
+      sql = "grant insert, select, update, delete on " + d.tableName +
+        " to '" + d.accountId + "'@'localhost';";
+      break;
+
+    case 'revoke':
+      sql = "revoke insert, select, update, delete on " + d.tableName +
+        " from '" + d.accountId + "'@'localhost';";
+      break;
+
+    case 'delete':
+      sql = 'delete from ' + q.schema + '.' + d.tableName;
+      // where clause
+      if (q.sql !== undefined) sql += q.sql;
+      sql += ';';
+      break;
+
+    case 'metadata':
+      sql = "select column_name,data_type,is_nullable,numeric_precision,numeric_scale from " +
+        "information_schema.columns where table_schema='" + q.schema + "' and table_name='" + q.table + "';";
+      break;
+
+    case 'create_bucket':
+      sql = 'create table ' + d.name + ' (' + ['id int', 'log varchar(255)'].join(',') + ');';
+      break;
+
+    case 'drop_bucket':
+      sql = 'drop table ' + d.name + ';';
+      break;
+
   }
 
   return sql;
