@@ -1,8 +1,8 @@
 {
   "name": "od2mysql",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Create SQL from the output of odparser",
-  "main": "index.js",
+  "main": "tosql.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
