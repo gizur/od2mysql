@@ -132,19 +132,15 @@ var f = function (q, d) {
         'from information_schema.tables where table_schema="' + q.schema +
         '"';
       break;
-
   }
 
   return sql;
 
 };
 
-toSql = function(q, d) {
-  try {
-    return f(q, d);    
-  } catch (e) {
-    error('ERROR in toSql, likely malformed input: ' + e);
-  }
+// Errors will just be thrown, needs to be handled by the user
+toSql = function (q, d) {
+  return f(q, d);
 };
 
 // exports
