@@ -43,7 +43,7 @@ randomString = function (len) {
     return str.slice(0, len);
   } catch (ex) {
     // handle error, most likely are entropy sources drained
-    console.log('Error! ' + ex);
+    error('Error! ' + ex);
     return null;
   }
 };
