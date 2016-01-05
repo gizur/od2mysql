@@ -56,7 +56,7 @@ var f = function (q, d, devMode) {
 
     case 'create_account':
       var accountId = email2accountId(d.email);
-      sql = "select '" + accountId + "' as accountId;";
+      sql = "select 'create_account' as queryType, " + accountId + "' as accountId;";
       sql += 'create database ' + accountId + ';';
       sql += "create user '" + accountId + "'@'localhost';";
       sql += "grant all privileges on " + accountId + ".* to '" +
@@ -65,74 +65,89 @@ var f = function (q, d, devMode) {
 
     case 'delete_account':
       var accountId = email2accountId(d.email);
-      sql = "drop user '" + accountId + "'@'localhost';";
+      sql = "select 'delete_account' as queryType;";
+      sql += "drop user '" + accountId + "'@'localhost';";
       sql += 'drop database ' + accountId + ';';
       break;
 
     case 'reset_password':
       var password = randomString(12);
-      sql = '';
-      if (devMode) sql += "select '" + password + "' as password;";
-      sql += "set password for '" + d.accountId + "'@'localhost' = password('" +
+      sql = "select 'reset_password' as queryType";
+      if (devMode) sql += ", '" + password + "' as password";
+      sql += ";set password for '" + d.accountId + "'@'localhost' = password('" +
         password + "');";
       break;
 
     case 'create_table':
-      sql = 'create table ' + d.tableDef.tableName + ' (' +
+      sql = "select 'create_table' as queryType;";
+      sql += 'create table ' + d.tableDef.tableName + ' (' +
         d.tableDef.columns.join(',') + ');';
       break;
 
     case 'delete_table':
-      sql = 'drop table ' + d.tableName + ';';
+      sql = "select 'delete_table' as queryType;";
+      sql += 'drop table ' + d.tableName + ';';
       break;
 
     case 'insert':
     case 'update':
-      if (!q.bucketOp) sql = d;
+      if (q.queryType === 'insert') sql = "select 'insert' as queryType;";
+      else sql = "select 'update' as queryType;";
+      if (!q.bucketOp) {
+        sql += d;
+      }
       else {
         var msg = 'writing to bucket ' + q.schema + '.' + q.table +
           ' with credentials ' + q.user;
 
-        sql = 'insert into ' + q.schema + '.' + q.table + '(id,log) values(2,"' + msg + '");'
+        sql += 'insert into ' + q.schema + '.' + q.table + '(id,log) values(2,"' + msg + '");'
       }
       break;
 
     case 'select':
-      sql = q.sql;
+      sql = "select 'select' as queryType;";
+      sql += q.sql;
       break;
 
     case 'grant':
-      sql = "grant insert, select, update, delete on " + d.tableName +
+      sql = "select 'grant' as queryType;";
+      sql += "grant insert, select, update, delete on " + d.tableName +
         " to '" + d.accountId + "'@'localhost';";
       break;
 
     case 'revoke':
-      sql = "revoke insert, select, update, delete on " + d.tableName +
+      sql = "select 'revoke' as queryType;";
+      sql += "revoke insert, select, update, delete on " + d.tableName +
         " from '" + d.accountId + "'@'localhost';";
       break;
 
     case 'delete':
-      sql = 'delete from ' + q.schema + '.' + d.tableName;
+      sql = "select 'delete' as queryType;";
+      sql += 'delete from ' + q.schema + '.' + d.tableName;
       // where clause
       if (q.sql !== undefined) sql += q.sql;
       sql += ';';
       break;
 
     case 'metadata':
-      sql = "select column_name,data_type,is_nullable,numeric_precision,numeric_scale from " +
+      sql = "select 'metadata' as queryType;";
+      sql += "select column_name,data_type,is_nullable,numeric_precision,numeric_scale from " +
         "information_schema.columns where table_schema='" + q.schema + "' and table_name='" + q.table + "';";
       break;
 
     case 'create_bucket':
-      sql = 'create table ' + d.name + ' (' + ['id int', 'log varchar(255)'].join(',') + ');';
+      sql = "select 'create_bucket' as queryType;";
+      sql += 'create table ' + d.name + ' (' + ['id int', 'log varchar(255)'].join(',') + ');';
       break;
 
     case 'drop_bucket':
-      sql = 'drop table ' + d.name + ';';
+      sql = "select 'drop_bucket' as queryType;";
+      sql += 'drop table ' + d.name + ';';
       break;
 
     case 'service_def':
-      sql = 'select table_name, (data_length+index_length)/1024/1024 as mb ' +
+      sql = "select 'service_def' as queryType;";
+      sql += 'select table_name, (data_length+index_length)/1024/1024 as mb ' +
         'from information_schema.tables where table_schema="' + q.schema +
         '"';
       break;
