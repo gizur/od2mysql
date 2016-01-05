@@ -48,14 +48,16 @@ randomString = function (len) {
   }
 };
 
-var f = function (q, d) {
+// q = ast for query, d = data, devMode = boolean (will return password after reset)
+var f = function (q, d, devMode) {
   var sql = false;
 
   switch (q.queryType) {
 
     case 'create_account':
       var accountId = email2accountId(d.email);
-      sql = 'create database ' + accountId + ';';
+      sql = "select '" + accountId + "' as accountId;";
+      sql += 'create database ' + accountId + ';';
       sql += "create user '" + accountId + "'@'localhost';";
       sql += "grant all privileges on " + accountId + ".* to '" +
         accountId + "'@'localhost' with grant option;";
@@ -69,7 +71,9 @@ var f = function (q, d) {
 
     case 'reset_password':
       var password = randomString(12);
-      sql = "set password for '" + d.accountId + "'@'localhost' = password('" +
+      sql = '';
+      if (devMode) sql += "select '" + password + "' as password;";
+      sql += "set password for '" + d.accountId + "'@'localhost' = password('" +
         password + "');";
       break;
 
@@ -139,8 +143,8 @@ var f = function (q, d) {
 };
 
 // Errors will just be thrown, needs to be handled by the user
-toSql = function (q, d) {
-  return f(q, d);
+toSql = function (q, d, devMode) {
+  return f(q, d, devMode);
 };
 
 // exports

@@ -13,7 +13,7 @@ log(tosql(q, d));
 
 var q = JSON.parse('{"queryType":"reset_password","schema":"accountid","adminOp":true,"bucketOp":false,"user":"accountid","password":"password"}');
 var d = JSON.parse('{"accountId":"accountid","email":"joe@example.com"}');
-log(tosql(q, d));
+log(tosql(q, d, true));
 
 var q = JSON.parse('{"queryType":"create_table","schema":"accountid","adminOp":true,"bucketOp":false,"user":"accountid","password":"password"}');
 var d = JSON.parse('{"tableDef":{"tableName":"mytable","columns":["col1 int","col2 varchar(255)"]}}');
