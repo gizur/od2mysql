@@ -56,7 +56,7 @@ var f = function (q, d, devMode) {
 
     case 'create_account':
       var accountId = email2accountId(d.email);
-      sql = "select 'create_account' as queryType, " + accountId + "' as accountId;";
+      sql = "select 'create_account' as queryType, '" + accountId + "' as accountId;";
       sql += 'create database ' + accountId + ';';
       sql += "create user '" + accountId + "'@'localhost';";
       sql += "grant all privileges on " + accountId + ".* to '" +
