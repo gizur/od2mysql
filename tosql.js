@@ -111,13 +111,13 @@ var f = function (q, d, devMode) {
 
     case 'grant':
       sql = "select 'grant' as queryType;";
-      sql += "grant insert, select, update, delete on " + d.tableName +
+      sql += "grant insert, select, update, delete on " + q.schema + '.' + d.tableName +
         " to '" + d.accountId + "'@'localhost';";
       break;
 
     case 'revoke':
       sql = "select 'revoke' as queryType;";
-      sql += "revoke insert, select, update, delete on " + d.tableName +
+      sql += "revoke insert, select, update, delete on " + q.schema + '.' + d.tableName +
         " from '" + d.accountId + "'@'localhost';";
       break;
 
