@@ -123,7 +123,7 @@ var f = function (q, d, devMode) {
 
     case 'delete':
       sql = "select 'delete' as queryType;";
-      sql += 'delete from ' + q.schema + '.' + d.tableName;
+      sql += 'delete from ' + q.schema + '.' + q.table;
       // where clause
       if (q.sql !== undefined) sql += q.sql;
       sql += ';';
