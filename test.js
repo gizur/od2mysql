@@ -71,3 +71,6 @@ log(tosql(q, d));
 
 var q = JSON.parse('{"queryType":"service_def","schema":"accountid","adminOp":true,"bucketOp":false,"user":"accountid","password":"password"}');var d = JSON.parse('{"tableName":"mytable"}');
 log(tosql(q, null));
+
+var q = JSON.parse('{"queryType":"etag","schema":"schema","table":"table","sql":"select col1,col2 from schema.table where Price + 5 > 10 order by col2","adminOp":false,"bucketOp":false,"user":"accountid","password":"password"}');
+log(tosql(q, null));

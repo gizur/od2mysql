@@ -95,8 +95,7 @@ var f = function (q, d, devMode) {
       else sql = "select 'update' as queryType;";
       if (!q.bucketOp) {
         sql += d;
-      }
-      else {
+      } else {
         var msg = 'writing to bucket ' + q.schema + '.' + q.table +
           ' with credentials ' + q.user;
 
@@ -150,6 +149,11 @@ var f = function (q, d, devMode) {
       sql += 'select table_name, (data_length+index_length)/1024/1024 as mb ' +
         'from information_schema.tables where table_schema="' + q.schema +
         '"';
+      break;
+
+    case 'etag':
+      sql = "select 'etag' as queryType;";
+      sql += q.sql;
       break;
   }
 
