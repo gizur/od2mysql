@@ -49,7 +49,7 @@ randomString = function (len) {
 };
 
 // q = ast for query, d = data, devMode = boolean (will return password after reset)
-var f = function (q, d, devMode, dbHost) {
+var f = function (q, d, devMode, password, dbHost) {
   if (!dbHost) dbHost = '%';
 
   var sql = false;
@@ -78,6 +78,8 @@ var f = function (q, d, devMode, dbHost) {
       if (devMode) sql += ", '" + password + "' as password";
       sql += ";set password for '" + d.accountId + "'@'" + dbHost + "' = password('" +
         password + "');";
+      sql += "grant all privileges on " + d.accountId + ".* to '" +
+        d.accountId + "'@'" + dbHost + "' identified by password '" + password + "' with grant option;";
       break;
 
     case 'create_table':
@@ -164,8 +166,8 @@ var f = function (q, d, devMode, dbHost) {
 };
 
 // Errors will just be thrown, needs to be handled by the user
-toSql = function (q, d, devMode, dbHost) {
-  return f(q, d, devMode, dbHost);
+toSql = function (q, d, devMode, password, dbHost) {
+  return f(q, d, devMode, password, dbHost);
 };
 
 // exports
