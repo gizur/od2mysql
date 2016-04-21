@@ -63,6 +63,8 @@ var f = function (q, d, devMode, dbHost) {
       sql += "create user '" + accountId + "'@'" + dbHost + "';";
       sql += "grant all privileges on " + accountId + ".* to '" +
         accountId + "'@'" + dbHost + "' with grant option;";
+      sql += "grant all privileges on " + accountId + ".* to '" +
+        accountId + "'@'localhost' with grant option;";
       break;
 
     case 'delete_account':
@@ -80,6 +82,8 @@ var f = function (q, d, devMode, dbHost) {
         password + "');";
       sql += "grant all privileges on " + d.accountId + ".* to '" +
         d.accountId + "'@'" + dbHost + "' identified by '" + password + "' with grant option;";
+      sql += "grant all privileges on " + d.accountId + ".* to '" +
+        d.accountId + "'@'localhost' identified by '" + password + "' with grant option;";
       break;
 
     case 'create_table':
