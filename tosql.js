@@ -50,7 +50,7 @@ randomString = function (len) {
 
 // q = ast for query, d = data, devMode = boolean (will return password after reset)
 var f = function (q, d, devMode, dbHost) {
-  if (!dbHost) dbHost = 'localhost';
+  if (!dbHost) dbHost = '%';
 
   var sql = false;
 
