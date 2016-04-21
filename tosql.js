@@ -49,7 +49,7 @@ randomString = function (len) {
 };
 
 // q = ast for query, d = data, devMode = boolean (will return password after reset)
-var f = function (q, d, devMode, password, dbHost) {
+var f = function (q, d, devMode, dbHost) {
   if (!dbHost) dbHost = '%';
 
   var sql = false;
@@ -166,8 +166,8 @@ var f = function (q, d, devMode, password, dbHost) {
 };
 
 // Errors will just be thrown, needs to be handled by the user
-toSql = function (q, d, devMode, password, dbHost) {
-  return f(q, d, devMode, password, dbHost);
+toSql = function (q, d, devMode, dbHost) {
+  return f(q, d, devMode, dbHost);
 };
 
 // exports
