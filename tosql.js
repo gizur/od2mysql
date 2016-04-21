@@ -79,7 +79,7 @@ var f = function (q, d, devMode, dbHost) {
       sql += ";set password for '" + d.accountId + "'@'" + dbHost + "' = password('" +
         password + "');";
       sql += "grant all privileges on " + d.accountId + ".* to '" +
-        d.accountId + "'@'" + dbHost + "' identified by password '" + password + "' with grant option;";
+        d.accountId + "'@'" + dbHost + "' identified by '" + password + "' with grant option;";
       break;
 
     case 'create_table':
