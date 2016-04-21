@@ -49,7 +49,9 @@ randomString = function (len) {
 };
 
 // q = ast for query, d = data, devMode = boolean (will return password after reset)
-var f = function (q, d, devMode) {
+var f = function (q, d, devMode, dbHost) {
+  if (!dbHost) dbHost = 'localhost';
+
   var sql = false;
 
   switch (q.queryType) {
@@ -58,15 +60,15 @@ var f = function (q, d, devMode) {
       var accountId = email2accountId(d.email);
       sql = "select 'create_account' as queryType, '" + accountId + "' as accountId;";
       sql += 'create database ' + accountId + ';';
-      sql += "create user '" + accountId + "'@'localhost';";
+      sql += "create user '" + accountId + "'@'" + dbHost + "';";
       sql += "grant all privileges on " + accountId + ".* to '" +
-        accountId + "'@'localhost' with grant option;";
+        accountId + "'@'" + dbHost + "' with grant option;";
       break;
 
     case 'delete_account':
       var accountId = email2accountId(d.email);
       sql = "select 'delete_account' as queryType;";
-      sql += "drop user '" + accountId + "'@'localhost';";
+      sql += "drop user '" + accountId + "'@'" + dbHost + "';";
       sql += 'drop database ' + accountId + ';';
       break;
 
@@ -74,7 +76,7 @@ var f = function (q, d, devMode) {
       var password = randomString(12);
       sql = "select 'reset_password' as queryType";
       if (devMode) sql += ", '" + password + "' as password";
-      sql += ";set password for '" + d.accountId + "'@'localhost' = password('" +
+      sql += ";set password for '" + d.accountId + "'@'" + dbHost + "' = password('" +
         password + "');";
       break;
 
@@ -111,13 +113,13 @@ var f = function (q, d, devMode) {
     case 'grant':
       sql = "select 'grant' as queryType;";
       sql += "grant insert, select, update, delete on " + q.schema + '.' + d.tableName +
-        " to '" + d.accountId + "'@'localhost';";
+        " to '" + d.accountId + "'@'" + dbHost + "';";
       break;
 
     case 'revoke':
       sql = "select 'revoke' as queryType;";
       sql += "revoke insert, select, update, delete on " + q.schema + '.' + d.tableName +
-        " from '" + d.accountId + "'@'localhost';";
+        " from '" + d.accountId + "'@'" + dbHost + "';";
       break;
 
     case 'delete':
@@ -162,8 +164,8 @@ var f = function (q, d, devMode) {
 };
 
 // Errors will just be thrown, needs to be handled by the user
-toSql = function (q, d, devMode) {
-  return f(q, d, devMode);
+toSql = function (q, d, devMode, dbHost) {
+  return f(q, d, devMode, dbHost);
 };
 
 // exports
