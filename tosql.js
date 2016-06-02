@@ -53,7 +53,7 @@ var f = function (q, d, devMode, dbHost) {
   if (!dbHost) dbHost = '%';
 
   var sql = false;
-
+log(q);
   switch (q.queryType) {
 
     case 'create_account':
@@ -158,6 +158,13 @@ var f = function (q, d, devMode, dbHost) {
     case 'etag':
       sql = "select 'etag' as queryType;";
       sql += q.sql;
+      break;
+
+    case 'exec':
+      sql = "select 'exec' as queryType;";
+      sql += "call " + d.procedure;
+      if (d.params && d.params.length)
+        sql += "(" + d.params.join(",") + ")";
       break;
   }
 
