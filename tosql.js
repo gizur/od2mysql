@@ -182,7 +182,7 @@ toSql = function (q, d, devMode, dbHost) {
   var res = f(q, d, devMode, dbHost);
 
   if (q.debug) {
-    res += ";select '" + res.replace(/'/g,'"') + "' as debug;";
+    res += "select '" + res.replace(/'/g,'"') + "' as debug;";
   }
 
   return res;
