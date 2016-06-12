@@ -166,6 +166,11 @@ log(q);
       if (d.params && d.params.length)
         sql += "(" + d.params.join(",") + ")";
       break;
+
+    case 'cmd':
+      sql = "select 'cmd' as queryType;";
+      sql += d.cmd;
+      break;
   }
 
   return sql;
@@ -174,7 +179,13 @@ log(q);
 
 // Errors will just be thrown, needs to be handled by the user
 toSql = function (q, d, devMode, dbHost) {
-  return f(q, d, devMode, dbHost);
+  var res = f(q, d, devMode, dbHost);
+
+  if (q.debug) {
+    res += ";select '" + res.replace(/'/g,'"') + "' as debug;";
+  }
+
+  return res;
 };
 
 // exports

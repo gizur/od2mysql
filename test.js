@@ -78,3 +78,10 @@ log(tosql(q, null));
 var q = JSON.parse('{"queryType":"exec","schema":"schema","adminOp":false,"bucketOp":false,"user":"accountid","password":"password"}');
 var d = JSON.parse('{"procedure":"spMyStoredProcedure","params":[1,2]}');
 log(tosql(q, d));
+
+var q = JSON.parse('{"queryType":"cmd","schema":"schema","adminOp":false,"bucketOp":false,"user":"accountid","password":"password"}');
+var d = JSON.parse('{"cmd":"create view vwTest as select * from Test;"}');
+log(tosql(q, d));
+
+var q = JSON.parse('{"queryType":"select","schema":"schema","table":"table","etagCols":["col1","col2"],"sql":"select * from schema.table where co1 = \'help\' order by col2 limit 10,100","debug":true,"adminOp":false,"bucketOp":false,"user":"accountid","password":"password"}');
+log(tosql(q, null));
